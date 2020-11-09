@@ -7,11 +7,11 @@ Random requested scripts
 
 2. [**Artillery Script**](https://github.com/marcos2221/DCS-Scripts/tree/master/arty): Script to make all artillery engage helicopters that are in the same position for more than 2 or 3 minutes.
 ![Image of Yaktocat](https://github.com/marcos2221/DCS-Scripts/blob/master/arty/arty.PNG)
-Parameters: 
-    redArty = true         <-- Red artillery will engage, Set to false to deactivate
-    blueArty = false       <-- Blue artillery won't engage, set to true to activate
-    artyRadius = 200       <-- Target Radius
-    artyExpendQty = 5      <-- Number of rounds to be fired
-    reactionTimemin = 30   <-- Reaction Time Minimum
-    reactionTimeMax = 120  <-- Reaction Time Maximum
-    targetOffset = 50      <-- Distance in meters to offset from target, reduce the probability of impact (kinda)..
+* Parameters: 
+    * redArty = true         <-- Red artillery will engage, Set to false to deactivate
+    * blueArty = false       <-- Blue artillery won't engage, set to true to activate
+    * artyRadius = 200       <-- Target Radius
+    * artyExpendQty = 5      <-- Number of rounds to be fired
+    * reactionTimemin = 30   <-- Reaction Time Minimum
+    * reactionTimeMax = 120  <-- Reaction Time Maximum
+    * targetOffset = 50      <-- Distance in meters to offset from target, reduce the probability of impact (kinda)..
