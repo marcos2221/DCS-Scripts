@@ -15,3 +15,9 @@ Random requested scripts
     * reactionTimemin = 30   <-- Reaction Time Minimum
     * reactionTimeMax = 120  <-- Reaction Time Maximum
     * targetOffset = 50      <-- Distance in meters to offset from target, reduce the probability of impact (kinda)..
+
+3.[**ROE Set On Proximity**](https://github.com/marcos2221/DCS-Scripts/tree/master/RoeSet): Script to make all RED AI Fw to engage only when merged with a Blue one. Training Purposes I guess
+
+4.[**Slot Block When Player dies**](https://github.com/marcos2221/DCS-Scripts/tree/master/SlotBlock): In Multiplyer all slot will get blocked for the players that die, the lock will remain until server restart or mission is changed, lock will work even if player disconnects and changes the name
+
+5.**What do YOU need?**
