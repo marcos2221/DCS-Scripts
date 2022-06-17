@@ -1,5 +1,6 @@
 -- Requested by a Mission builder Facebook group member
 -- -----------------------------------------------------------
+-- This File goes in SavedGames folder -> DCS.openbeta_server\Scripts\Hooks\ and will run for any mission that runs in the server, that's why the "enabledfor" mission list
 -- Block slot usage once player died until server restart
 
 --Any other mission name separated by , or remove everything between { }  to enable for all missions
