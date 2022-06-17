@@ -22,13 +22,13 @@ Random requested scripts
 
 5.[**Lua Predicate - Complex events (kill)**](https://github.com/marcos2221/DCS-Scripts/tree/master/Lua%20Predicate)
 Create conditions in the scripts and trigger it as a Lua predicate.
-Conditions: 
-*unitCoalition  => Coalition Blue, Red or Neutral
-*unitCategory   => Category of the Killer -> Aircraft, ground unit, helicopter, Ship, 
-*unitisHuman   => If the killer is Human or AI or both
-*targetCoalition => Coalition Blue, Red or Neutral 
-*targetCategory  => Category of the Killed -> Aircraft, ground unit, helicopter, Ship, 
-*targetisHuman   => If the killed unit is Human or AI or both 
+* Conditions: 
+   * unitCoalition  => Coalition Blue, Red or Neutral
+   * unitCategory   => Category of the Killer -> Aircraft, ground unit, helicopter, Ship, 
+   * unitisHuman   => If the killer is Human or AI or both
+   * targetCoalition => Coalition Blue, Red or Neutral 
+   * targetCategory  => Category of the Killed -> Aircraft, ground unit, helicopter, Ship, 
+   * targetisHuman   => If the killed unit is Human or AI or both 
 ![Image of Yaktocat](https://github.com/marcos2221/DCS-Scripts/blob/master/Lua%20Predicate/Screenshot%202022-06-17%20132828.png)
 
 6.**What do YOU need?**
