@@ -21,6 +21,15 @@
 -- true -> Human unit
 -- false -> AI unit
 
+-- Unit Name / Target Unit Name
+-- nil or UnitName in the Mission Editor
+
+-- Unit Group Name / Target Group Name
+-- Group Name on the mission editor
+
+-- Unit Type Name 
+-- Dcs Internal name of the Unit check C:\Program Files\Eagle Dynamics\DCS World OpenBeta\Scripts\Database\db_countries.lua to see the unit type names 
+
 -- Load this file in the Mission start trigger as a Doscriptfile
 
 -- In Condition -> LUA Predicate use (without the --)
@@ -43,18 +52,31 @@ end
 
 local events = {
                     ["BLUEFWKILL"] = { unitCoalition    = coalition.side.BLUE, 
-                                       unitCategory     = nil, 
-                                       unitisHuman      = true,
+                                       unitCategory     = Unit.Category.AIRPLANE, 
+                                       unitisHuman      = nil,
+                                       unitName         = nil,
+                                       unitGroupName    = nil,
+                                       unitType         = nil,
                                        targetCoalition  = coalition.side.RED, 
                                        targetCategory   = Unit.Category.AIRPLANE, 
-                                       targetisHuman    = nil 
+                                       targetisHuman    = nil,
+                                       targetUnitName       = "Aerial-2-1",
+                                       targetUnitGroupName  = nil,
+                                       targetType          = nil,
+                                       
                                      },
-                ["BLUEGROUNDKILL"] = { unitCoalition    = coalition.side.BLUE, 
-                                       unitCategory     = nil, 
-                                       unitisHuman      = nil,
-                                       targetCoalition  = coalition.side.RED, 
-                                       targetCategory   = Unit.Category.GROUND_UNIT, 
-                                       targetisHuman    = nil 
+                ["BLUEGROUNDKILL"] = { unitCoalition        = coalition.side.BLUE, 
+                                       unitCategory         = nil, 
+                                       unitisHuman          = nil,
+                                       unitName             = nil,
+                                       unitGroupName        = nil,
+                                       unitType             = nil,
+                                       targetCoalition      = coalition.side.RED, 
+                                       targetCategory       = Unit.Category.GROUND_UNIT, 
+                                       targetisHuman        = nil,
+                                       targetUnitName       = nil,
+                                       targetUnitGroupName  = nil,
+                                       targetType           = nil
                                  }                                 
                 
                } 
@@ -97,7 +119,6 @@ function _eventHandler:onEvent(_event)
               ignore = true
             end
           end
-          
           if _eventdetails.unitisHuman ~= nil then
               if isHuman(_unit) ~= _eventdetails.unitisHuman then
                 env.info(_trigger .. " ignoring Unit Human")
@@ -105,6 +126,27 @@ function _eventHandler:onEvent(_event)
               end
           end
           
+          if _eventdetails.unitName ~= nil then
+            if _unit:getName() ~= _eventdetails.unitName then
+              env.info(_trigger .." ignoring Unit Name")
+              ignore = true
+            end
+          end
+          
+          if _eventdetails.unitGroupName ~= nil then
+            if _unit:getGroup() ~= nil and _unit:getGroup():getName() ~= _eventdetails.unitGroupName then
+              env.info(_trigger .." ignoring Group name")
+              ignore = true
+            end
+          end
+          if _eventdetails.unitType ~= nil then
+            if _unit:getTypeName() ~= _eventdetails.unitType then
+              env.info(_trigger .." ignoring unitType")
+              ignore = true
+            end
+          end         
+        
+-- Target
           if _eventdetails.targetColition ~= nil then
             if _targetUnit:getCoalition() ~= _eventdetails.targetColition then
               ignore = true
@@ -124,6 +166,25 @@ function _eventHandler:onEvent(_event)
                 ignore = true
               end
           end
+          if _eventdetails.targetUnitName ~= nil then
+            if _targetUnit:getName() ~= _eventdetails.targetUnitName then
+              env.info(_trigger .." ignoring Unit Name")
+              ignore = true
+            end
+          end
+          if _eventdetails.targetUnitGroupName ~= nil then
+            if _targetUnit:getGroup() ~= nil and _targetUnit:getGroup():getName() ~= _eventdetails.targetUnitGroupName then
+              env.info(_trigger .." ignoring Group name")
+              ignore = true
+            end
+          end 
+          if _eventdetails.targetType ~= nil then
+            if _targetUnit:getTypeName() ~= _eventdetails.targetType then
+              env.info(_trigger .." ignoring unitType")
+              ignore = true
+            end
+          end         
+          
           
           
           if ignore == false then
