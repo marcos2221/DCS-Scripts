@@ -31,4 +31,7 @@ Create conditions in the scripts and trigger it as a Lua predicate.
    * targetisHuman   => If the killed unit is Human or AI or both 
 ![Image of Yaktocat](https://github.com/marcos2221/DCS-Scripts/blob/master/Lua%20Predicate/Screenshot%202022-06-17%20132828.png)
 
-6.**What do YOU need?**
+6.[**Simple Respawn **](https://github.com/marcos2221/DCS-Scripts/tree/master/simpleRespawn)
+Re-spawns dead units from a specific coalition after a predetermined time
+
+7.**What do YOU need?**
