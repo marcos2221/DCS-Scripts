@@ -15,6 +15,24 @@ local function respawnRed( _groupName )
 
 end
 
+local function getRedUnits()
+  local redGroups = coalition.getGroups(1,  Group.Category.GROUND)
+  for key, group in pairs (redGroups) do 
+    local _units = group:getUnits()
+    for key2, _unit in pairs (_units) do 
+       
+      if _unit ~= nil then
+        
+          
+          unitGroupMapping[_unit:getName()] = group:getName()
+            
+        
+      end
+    end
+  end
+end
+
+
 local respawn_eventHandler = {}
 
 function respawn_eventHandler:onEvent(_event)
@@ -82,3 +100,4 @@ function respawn_eventHandler:onEvent(_event)
   
 end
 world.addEventHandler(respawn_eventHandler)
+getRedUnits()
