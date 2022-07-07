@@ -76,7 +76,7 @@ function respawn_eventHandler:onEvent(_event)
      
         if resPawningList[groupName] == nil then
           resPawningList[groupName] = true
-          timer.scheduleFunction(respawnRed, groupName,timer.getTime() + respawnTime / 60 )
+          timer.scheduleFunction(respawnRed, groupName,timer.getTime() + respawnTime * 60 )
         end
      
     end
