@@ -1,7 +1,3 @@
--- Kill Events to report
--- Add a kill event to check 
--- 
-
 -- Coalition
 -- nil -> Check everything
 --coalition.side.BLUE
@@ -14,7 +10,7 @@
 --Unit.Category.GROUND_UNIT
 --Unit.Category.HELICOPTER
 --Unit.Category.SHIP
---Unit.Category.STRUCTURE 
+--Unit.Category.STRUCTURE
 
 -- Human
 -- nil -> Check everything
@@ -27,59 +23,239 @@
 -- Unit Group Name / Target Group Name
 -- Group Name on the mission editor
 
--- Unit Type Name 
--- Dcs Internal name of the Unit check C:\Program Files\Eagle Dynamics\DCS World OpenBeta\Scripts\Database\db_countries.lua to see the unit type names 
+-- Unit Type Name
+-- Dcs Internal name of the Unit check C:\Program Files\Eagle Dynamics\DCS World OpenBeta\Scripts\Database\db_countries.lua to see the unit type names
 
 -- Load this file in the Mission start trigger as a Doscriptfile
 
 -- In Condition -> LUA Predicate use (without the --)
---return killPredicate("[NAME OF THE EVENT]")
+--return kill("[NAME OF THE EVENT]")  
+--return deadPilot("[NAME OF THE EVENT]")
+--return ejection("[NAME OF THE EVENT]")
+--return takOff("[NAME OF THE EVENT]")
+--return land("[NAME OF THE EVENT]")
 
-local triggeredEvents = {}
+local triggeredKillEvents = {}
+local triggeredPilotDeadEvents = {}
+local triggeredEjectionEvents = {}
+local triggeredTakeOffEvents = {}
+local triggeredLandEvents = {}
+local triggeredDetectionEvents = {}
 
-function killPredicate( event )
-
-  if triggeredEvents[event] == true then
-     env.info("Trigger " .. event .. " is true")
-    triggeredEvents[event] = false
-    return true
-  else
-   -- env.info("Trigger is false")
-    return false
-  end
-
+function kill( event )
+  if triggeredKillEvents[event] == nil then return false end
+  if #triggeredKillEvents[event] == 0 then return false end
+  table.remove(triggeredKillEvents[event])
+  return true
+end
+function deadPilot( event )
+  if triggeredPilotDeadEvents[event] == nil then return false end
+  if #triggeredPilotDeadEvents[event] == 0 then return false end
+  table.remove(triggeredPilotDeadEvents[event])
+  return true
+end
+function ejection( event )
+  if triggeredEjectionEvents[event] == nil then return false end
+  if #triggeredEjectionEvents[event] == 0 then return false end
+  table.remove(triggeredEjectionEvents[event])
+  return true
+end
+function takeOff( event )
+  if triggeredTakeOffEvents[event] == nil then return false end
+  if #triggeredTakeOffEvents[event] == 0 then return false end
+  table.remove(triggeredTakeOffEvents[event])
+  return true
+end
+function land( event )
+  if triggeredLandEvents[event] == nil then return false end
+  if #triggeredLandEvents[event] == 0 then return false end
+  table.remove(triggeredLandEvents[event])
+  return true
+end
+function detection( event )
+  if triggeredDetectionEvents[event] == nil then return false end
+  if #triggeredDetectionEvents[event] == 0 then return false end
+  table.remove(triggeredDetectionEvents[event])
+  return true
 end
 
-local events = {
-                    ["BLUEFWKILL"] = { unitCoalition    = coalition.side.BLUE, 
-                                       unitCategory     = Unit.Category.AIRPLANE, 
-                                       unitisHuman      = nil,
-                                       unitName         = nil,
-                                       unitGroupName    = nil,
-                                       unitType         = nil,
-                                       targetCoalition  = coalition.side.RED, 
-                                       targetCategory   = Unit.Category.AIRPLANE, 
-                                       targetisHuman    = nil,
-                                       targetUnitName       = "Aerial-2-1",
-                                       targetUnitGroupName  = nil,
-                                       targetType          = nil,
-                                       
-                                     },
-                ["BLUEGROUNDKILL"] = { unitCoalition        = coalition.side.BLUE, 
-                                       unitCategory         = nil, 
-                                       unitisHuman          = nil,
-                                       unitName             = nil,
-                                       unitGroupName        = nil,
-                                       unitType             = nil,
-                                       targetCoalition      = coalition.side.RED, 
-                                       targetCategory       = Unit.Category.GROUND_UNIT, 
-                                       targetisHuman        = nil,
-                                       targetUnitName       = nil,
-                                       targetUnitGroupName  = nil,
-                                       targetType           = nil
-                                 }                                 
-                
-               } 
+local killEvents = {}
+local pilotDeadEvents = {}
+local ejectionEvents = {}
+local takeOffEvents = {}
+local landEvents = {}
+local detectEvents = {}
+
+--KILL EVENTS
+
+killEvents["BLUEAIR2AIRKILL"] = {
+  unitCoalition    = coalition.side.BLUE,
+  unitCategory     = Unit.Category.AIRPLANE,
+  unitisHuman      = nil,
+  unitName         = nil,
+  unitGroupName    = nil,
+  unitType         = nil,
+  targetCoalition  = coalition.side.RED,
+  targetCategory   = Unit.Category.AIRPLANE,
+  targetisHuman    = nil,
+  targetUnitName       = nil,
+  targetUnitGroupName  = nil,
+  targetType          = nil,
+}
+killEvents["AZULVSROJO"] = {
+  unitCoalition    = coalition.side.BLUE,
+  unitCategory     = Unit.Category.AIRPLANE,
+  unitisHuman      = nil,
+  unitName         = nil,
+  unitGroupName    = nil,
+  unitType         = nil,
+  targetCoalition  = coalition.side.RED,
+  targetCategory   = Unit.Category.AIRPLANE,
+  targetisHuman    = nil,
+  targetUnitName       = nil,
+  targetUnitGroupName  = nil,
+  targetType          = nil,
+}
+killEvents["REDAIR2AIRKILL"] = {
+  unitCoalition    = coalition.side.RED,
+  unitCategory     = Unit.Category.AIRPLANE,
+  unitisHuman      = nil,
+  unitName         = nil,
+  unitGroupName    = nil,
+  unitType         = nil,
+  targetCoalition  = coalition.side.BLUE,
+  targetCategory   = Unit.Category.AIRPLANE,
+  targetisHuman    = nil,
+  targetUnitName       = nil,
+  targetUnitGroupName  = nil,
+  targetType          = nil,
+}
+killEvents["BLUEGROUNDKILL"] = {
+  unitCoalition        = coalition.side.BLUE,
+  unitCategory         = nil,
+  unitisHuman          = nil,
+  unitName             = nil,
+  unitGroupName        = nil,
+  unitType             = nil,
+  targetCoalition      = coalition.side.RED,
+  targetCategory       = Unit.Category.GROUND_UNIT,
+  targetisHuman        = nil,
+  targetUnitName       = nil,
+  targetUnitGroupName  = nil,
+  targetType           = nil
+}
+
+-- PILOT DEAD EVENT
+pilotDeadEvents["BLUEPILOTPLAYERDEAD"] = {
+  unitCoalition    = coalition.side.BLUE,
+  unitCategory     = nil,
+  unitisHuman      = true,
+  unitName         = nil,
+  unitType         = nil,
+}
+pilotDeadEvents["BLUEPILOTDEAD"] = {
+  unitCoalition    = coalition.side.BLUE,
+  unitCategory     = Unit.Category.AIRPLANE,
+  unitisHuman      = nil,
+  unitName         = nil,
+  unitType         = nil,
+}
+pilotDeadEvents["REDPILOTDEAD"] = {
+  unitCoalition    = coalition.side.RED,
+  unitCategory     = Unit.Category.AIRPLANE,
+  unitisHuman      = nil,
+  unitName         = nil,
+  unitType         = nil,
+}
+
+-- EJECTION EVENT
+ejectionEvents["BLUEEJECTIONS"] = {
+  unitCoalition    = coalition.side.BLUE,
+  unitCategory     = nil,
+  unitisHuman      = nil,
+  unitName         = nil,
+  unitType         = nil,
+}
+ejectionEvents["REDEJECTIONS"] = {
+  unitCoalition    = coalition.side.RED,
+  unitCategory     = nil,
+  unitisHuman      = nil,
+  unitName         = nil,
+  unitType         = nil,
+}
+
+
+--TAKE OFF EVENT
+takeOffEvents["BLUETAKEOFF"] = {
+  unitCoalition    = coalition.side.BLUE,
+  unitCategory     = nil,
+  unitisHuman      = nil,
+  unitName         = nil,
+  unitType         = nil,
+}
+takeOffEvents["REDTAKEOFF"] = {
+  unitCoalition    = coalition.side.RED,
+  unitCategory     = nil,
+  unitisHuman      = nil,
+  unitName         = nil,
+  unitType         = nil,
+}
+
+--LAND EVENTS
+landEvents["BLUELAND"] = {
+  unitCoalition    = coalition.side.BLUE,
+  unitCategory     = nil,
+  unitisHuman      = nil,
+  unitName         = nil,
+  unitType         = nil,
+}
+landEvents["BLUELAND2"] = {
+  unitCoalition    = coalition.side.BLUE,
+  unitCategory     = nil,
+  unitisHuman      = nil,
+  unitName         = nil,
+  unitType         = nil,
+}
+landEvents["REDLAND"] = {
+  unitCoalition    = coalition.side.RED,
+  unitCategory     = nil,
+  unitisHuman      = nil,
+  unitName         = nil,
+  unitType         = nil,
+}
+
+--Detection 
+local enableBlueDetection = true   -- <-- Enable detection
+local enableRedDetection = false   -- <-- Enable detection
+-- Constant Values Do not change
+local VISUAL = 1
+local OPTIC  = 2
+local RADAR  = 4
+local IRST   = 8
+local RWR    = 16
+local DLINK  = 32
+--  ------------------------------
+--Detection type Up to 3 ways
+local detection1 = RADAR  
+local detection2 = OPTIC -- or nil
+local detection3 = VISUAL -- or nil
+
+detectEvents["BLUE"] = {
+  unitCoalition    = coalition.side.BLUE,
+  unitCategory     = nil,
+  unitisHuman      = nil,
+  unitName         = nil,
+  unitGroupName    = "Aerial-8",
+  unitType         = nil,
+}
+detectEvents["RED"] = { 
+  unitCoalition    = coalition.side.BLUE,
+  unitCategory     = nil,
+  unitisHuman      = nil,
+  unitName         = nil,
+  unitType         = nil,
+}
+
 
 
 
@@ -94,105 +270,208 @@ local function isHuman( _unit)
   end
   return false
 end
+
+local function unitCheck(_unit, _eventdetails)
+  local _unitDesc = _unit:getDesc()
+  if _eventdetails.unitCoalition ~= nil then
+    if _unit:getCoalition() ~= _eventdetails.unitCoalition then
+      return false
+    end
+  end
+  if _eventdetails.unitCategory ~= nil then
+    if _unitDesc.category ~= _eventdetails.unitCategory then
+      return false
+    end
+  end
+  if _eventdetails.unitisHuman ~= nil then
+    if isHuman(_unit) ~= _eventdetails.unitisHuman then
+      return false
+    end
+  end
+  if _eventdetails.unitName ~= nil then
+    if _unit:getName() ~= _eventdetails.unitName then
+      return false
+    end
+  end
+  if _eventdetails.unitGroupName ~= nil then
+    if _unit.getGroup  ~= nil then
+      if _unit:getGroup() ~= nil and _unit:getGroup():getName() ~= _eventdetails.unitGroupName then
+        return false
+      end
+    end
+  end
+  if _eventdetails.unitType ~= nil then
+    if _unit:getTypeName() ~= _eventdetails.unitType then
+      return false
+    end
+  end
+  return true
+end
+local function detect( _coalition, detection1, detection2, detection3 )
+  
+ timer.scheduleFunction(function()detect(_coalition, detection1,detection2,detection3)  end,nil,timer.getTime() + 5)
+ local _coa
+ 
+ if _coalition == coalition.side.BLUE then
+  _coa = coalition.side.RED
+ else
+  _coa = coalition.side.BLUE
+ end
+ local _allEnemy = coalition.getGroups(_coa,  Group.Category.GROUND)
+ for key, _group in pairs( _allEnemy) do
+  local _units = _group:getUnits()
+  for keyunit, _unit in pairs(_units) do
+    local _controller = Unit.getController( _unit )
+    local _targets = _controller:getDetectedTargets( detection1, detection2, detection3 )
+    for key2, detected in pairs(_targets) do
+      local _unitTarget = detected.object
+      if _unitTarget ~= nil then
+        local TargetIsDetected, TargetIsVisible, TargetLastTime, TargetKnowType, TargetKnowDistance, TargetLastPos, TargetLastVelocity
+        = _controller:isTargetDetected( _unitTarget, detection1, detection2, detection3 )
+        if TargetIsDetected == true then
+          for _trigger, _eventdetails in pairs(detectEvents) do
+          local ignore = false
+            if unitCheck(_unitTarget, _eventdetails) == false then
+               ignore = true
+            end
+            if ignore == false then
+              if triggeredDetectionEvents[_trigger] == nil then 
+                triggeredDetectionEvents[_trigger] = {}
+              end
+              table.insert(triggeredDetectionEvents[_trigger],true)
+              return true
+            end
+          end
+        end
+      end
+    end
+  end
+ end
+ 
+ return false  
+end
 function _eventHandler:onEvent(_event)
   local status, err = pcall(function()
     if _event == nil or _event.initiator == nil then
-        return
+       return
     end
     if _event.id == world.event.S_EVENT_KILL then
-        local _unit =_event.initiator
-        local _unitDesc = _unit:getDesc()
-        local _targetUnit = _event.target
-        local _targetDesc = _targetUnit:getDesc()
-        for _trigger, _eventdetails in pairs(events) do
-          local ignore = false
-          if _eventdetails.unitColition ~= nil then
-            if _unit:getCoalition() ~= _eventdetails.unitCoalition then
-              ignore = true
-              env.info(_trigger .. " ignoring due Unit Coalition")
-            end
-          end
-          
-          if _eventdetails.unitCategory ~= nil then
-            if _unitDesc.category ~= _eventdetails.unitCategory then
-              env.info(_trigger .." ignoring Unit category")
-              ignore = true
-            end
-          end
-          if _eventdetails.unitisHuman ~= nil then
-              if isHuman(_unit) ~= _eventdetails.unitisHuman then
-                env.info(_trigger .. " ignoring Unit Human")
-                ignore = true
-              end
-          end
-          
-          if _eventdetails.unitName ~= nil then
-            if _unit:getName() ~= _eventdetails.unitName then
-              env.info(_trigger .." ignoring Unit Name")
-              ignore = true
-            end
-          end
-          
-          if _eventdetails.unitGroupName ~= nil then
-            if _unit:getGroup() ~= nil and _unit:getGroup():getName() ~= _eventdetails.unitGroupName then
-              env.info(_trigger .." ignoring Group name")
-              ignore = true
-            end
-          end
-          if _eventdetails.unitType ~= nil then
-            if _unit:getTypeName() ~= _eventdetails.unitType then
-              env.info(_trigger .." ignoring unitType")
-              ignore = true
-            end
-          end         
-        
--- Target
-          if _eventdetails.targetColition ~= nil then
-            if _targetUnit:getCoalition() ~= _eventdetails.targetColition then
-              ignore = true
-              env.info(_trigger .. " ignoring Target Coalition")
-            end
-          end
-          
-          if _eventdetails.targetCategory ~= nil then
-            if _targetDesc.category ~= _eventdetails.targetCategory then
-              env.info(_trigger .. " ignoring Target Category")
-              ignore = true
-            end
-          end
-           if _eventdetails.targetisHuman ~= nil then
-              if isHuman(_targetUnit) ~= _eventdetails.targetisHuman then
-                 env.info(_trigger .." ignoring target unit human")
-                ignore = true
-              end
-          end
-          if _eventdetails.targetUnitName ~= nil then
-            if _targetUnit:getName() ~= _eventdetails.targetUnitName then
-              env.info(_trigger .." ignoring Unit Name")
-              ignore = true
-            end
-          end
-          if _eventdetails.targetUnitGroupName ~= nil then
-            if _targetUnit:getGroup() ~= nil and _targetUnit:getGroup():getName() ~= _eventdetails.targetUnitGroupName then
-              env.info(_trigger .." ignoring Group name")
-              ignore = true
-            end
-          end 
-          if _eventdetails.targetType ~= nil then
-            if _targetUnit:getTypeName() ~= _eventdetails.targetType then
-              env.info(_trigger .." ignoring unitType")
-              ignore = true
-            end
-          end         
-          
-          
-          
-          if ignore == false then
-            triggeredEvents[_trigger] = true
-            env.info("Trigger " .. _trigger .. " Added")
-          end
-          
+      local _unit =_event.initiator
+      local _unitDesc = _unit:getDesc()
+      local _targetUnit = _event.target
+      local _targetDesc = _targetUnit:getDesc()
+      for _trigger, _eventdetails in pairs(killEvents) do
+        local ignore = false
+        if unitCheck(_unit, _eventdetails) == false then
+          ignore = true
         end
+        -- Target
+        if _eventdetails.targetColition ~= nil then
+          if _targetUnit:getCoalition() ~= _eventdetails.targetColition then
+            ignore = true
+            end
+        end
+
+        if _eventdetails.targetCategory ~= nil then
+          if _targetDesc.category ~= _eventdetails.targetCategory then
+            ignore = true
+          end
+        end
+        if _eventdetails.targetisHuman ~= nil then
+          if isHuman(_targetUnit) ~= _eventdetails.targetisHuman then
+            ignore = true
+          end
+        end
+        if _eventdetails.targetUnitName ~= nil then
+          local targetName = _eventdetails.targetUnitName
+          if _targetUnit:getName() ~= targetName then
+            ignore = true
+          end
+        end
+        if _eventdetails.targetUnitGroupName ~= nil then
+          if _targetUnit:getGroup() ~= nil and _targetUnit:getGroup():getName() ~= _eventdetails.targetUnitGroupName then
+             ignore = true
+          end
+        end
+        if _eventdetails.targetType ~= nil then
+          if _targetUnit:getTypeName() ~= _eventdetails.targetType then
+            ignore = true
+          end
+        end
+        if ignore == false then
+          if triggeredKillEvents[_trigger] == nil then 
+            triggeredKillEvents[_trigger] = {}
+          end
+          table.insert(triggeredKillEvents[_trigger],true)
+        end
+      end
+    elseif _event.id == world.event.S_EVENT_PILOT_DEAD then
+      local _unit =_event.initiator
+      local _unitDesc = _unit:getDesc()
+
+      for _trigger, _eventdetails in pairs(pilotDeadEvents) do
+        local ignore = false
+        if unitCheck(_unit, _eventdetails) == false then
+          ignore = true
+        end
+        if ignore == false then
+          if triggeredPilotDeadEvents[_trigger] == nil then 
+            triggeredPilotDeadEvents[_trigger] = {}
+          end
+          table.insert(triggeredPilotDeadEvents[_trigger],true)
+        end
+      end
+
+    elseif _event.id == world.event.S_EVENT_EJECTION then
+
+      local _unit =_event.initiator
+      local _unitDesc = _unit:getDesc()
+
+      for _trigger, _eventdetails in pairs(ejectionEvents) do
+        local ignore = false
+        if unitCheck(_unit, _eventdetails) == false then
+          ignore = true
+        end
+        if ignore == false then
+          if triggeredEjectionEvents[_trigger] == nil then 
+            triggeredEjectionEvents[_trigger] = {}
+          end
+          table.insert(triggeredEjectionEvents[_trigger],true)
+        end
+      end
+
+    elseif _event.id == world.event.S_EVENT_TAKEOFF then
+      local _unit =_event.initiator
+      local _unitDesc = _unit:getDesc()
+
+      for _trigger, _eventdetails in pairs(takeOffEvents) do
+        local ignore = false
+        if unitCheck(_unit, _eventdetails) == false then
+          ignore = true
+        end
+        if ignore == false then
+          if  triggeredTakeOffEvents[_trigger] == nil then 
+             triggeredTakeOffEvents[_trigger] = {}
+          end
+          table.insert(triggeredTakeOffEvents[_trigger],true)
+        end
+      end
+    elseif _event.id == world.event.S_EVENT_LAND then
+      local _unit =_event.initiator
+      local _unitDesc = _unit:getDesc()
+
+      for _trigger, _eventdetails in pairs(landEvents) do
+        local ignore = false
+        if unitCheck(_unit, _eventdetails) == false then
+          ignore = true
+        end
+        if ignore == false then
+          if  triggeredLandEvents[_trigger] == nil then 
+             triggeredLandEvents[_trigger] = {}
+          end
+          table.insert(triggeredLandEvents[_trigger],true)
+        end
+      end
     end
 
   end)
@@ -202,4 +481,12 @@ function _eventHandler:onEvent(_event)
   end
 end
 world.addEventHandler(_eventHandler)
-env.info("Kill event Script loaded")
+env.info("Predicate event Script loaded")
+
+if enableBlueDetection then
+  detect( coalition.side.BLUE, detection1, detection2,detection3)
+end
+
+if enableRedDetection then
+  detect(coalition.side.RED, detection1, detection2,detection3)
+end
