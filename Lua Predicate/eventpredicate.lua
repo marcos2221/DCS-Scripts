@@ -160,6 +160,13 @@ pilotDeadEvents["BLUEPILOTDEAD"] = {
   unitName         = nil,
   unitType         = nil,
 }
+pilotDeadEvents["BLUEPILOTDEADHELI"] = {
+  unitCoalition    = coalition.side.BLUE,
+  unitCategory     = Unit.Category.HELICOPTER,
+  unitisHuman      = nil,
+  unitName         = nil,
+  unitType         = nil,
+}
 pilotDeadEvents["REDPILOTDEAD"] = {
   unitCoalition    = coalition.side.RED,
   unitCategory     = Unit.Category.AIRPLANE,
@@ -256,7 +263,17 @@ detectEvents["RED"] = {
   unitType         = nil,
 }
 
+local function getDistance(_point1, _point2)
 
+  local xUnit = _point1.x
+  local yUnit = _point1.z
+  local xZone = _point2.x
+  local yZone = _point2.z
+  local xDiff = xUnit - xZone
+  local yDiff = yUnit - yZone
+
+  return math.sqrt(xDiff * xDiff + yDiff * yDiff)
+end
 
 
 local _eventHandler = {}
@@ -279,7 +296,9 @@ local function unitCheck(_unit, _eventdetails)
     end
   end
   if _eventdetails.unitCategory ~= nil then
+    --env.info("Unit category looking for " .. _eventdetails.unitCategory .. " actually is " .. _unitDesc.category)
     if _unitDesc.category ~= _eventdetails.unitCategory then
+      
       return false
     end
   end
@@ -411,14 +430,19 @@ function _eventHandler:onEvent(_event)
 
       for _trigger, _eventdetails in pairs(pilotDeadEvents) do
         local ignore = false
+        --env.info("Checking " .. _trigger)
         if unitCheck(_unit, _eventdetails) == false then
           ignore = true
         end
+        
         if ignore == false then
           if triggeredPilotDeadEvents[_trigger] == nil then 
             triggeredPilotDeadEvents[_trigger] = {}
           end
           table.insert(triggeredPilotDeadEvents[_trigger],true)
+          --env.info("Added trigger")
+        else
+          --env.info("Ignored trigger")
         end
       end
 
@@ -480,6 +504,111 @@ function _eventHandler:onEvent(_event)
     env.error("UnitKillPredicate - " .. err)
   end
 end
+
+
+---Bandera por Proximidad
+--@function  name banderaPorProximidad
+--@param #string nombreUnidad Unidad contra la que chequear
+--@param #int distancia Distancia en metros
+--@param #string coalicion 1 o rojo, 2 o azul o -1 para ambos
+--@param #boolean checkFw Checkear Aviones
+--@param #boolean checkHeli Checkear helicopteros
+--@param #boolean soloHumanos solo detectar humanos
+--@param #boolean contador Devuelve el numero de unidades envez de un flag true o false
+local function banderaPorProximidad( nombreUnidad, distancia , coalicion, checkFw, checkHeli, soloHumanos , contador ) -- Distancia En metros
+  
+  local _allGroups = {} 
+  
+  local checkUnit = Unit.getByName(nombreUnidad)
+  if checkUnit == nil then return end
+  local unitPos = checkUnit:getPoint()
+  
+  if coalicion == 2 or coalicion == "azul" or coalicion == -1 then
+    if checkFw then
+      local tempGroupList = coalition.getGroups(coalition.side.BLUE,  Group.Category.AIRPLANE)
+      for key, val in pairs ( tempGroupList ) do
+        table.insert(_allGroups ,val)
+      end
+    end
+    if checkHeli then
+      local tempGroupList = coalition.getGroups(coalition.side.BLUE,  Group.Category.HELICOPTER)
+      for key, val in pairs ( tempGroupList ) do
+        table.insert(_allGroups ,val)
+      end
+    end
+  end
+  if coalicion == 1 or coalicion == "rojo" or coalicion == -1 then
+    if checkFw then
+      local tempGroupList = coalition.getGroups(coalition.side.RED,  Group.Category.AIRPLANE)
+      for key, val in pairs ( tempGroupList ) do
+        table.insert(_allGroups ,val)
+      end
+    end
+    if checkHeli then
+      local tempGroupList = coalition.getGroups(coalition.side.RED,  Group.Category.HELICOPTER)
+      for key, val in pairs ( tempGroupList ) do
+        table.insert(_allGroups ,val)
+      end
+    end
+  end
+  
+  local count = 0
+  for key, group in pairs (_allGroups) do
+ 
+    local _units = group:getUnits()
+    if _units ~= nil then
+      for key2, unit in pairs(_units) do
+        if unit ~= nil then      
+          local ignore = false
+          if soloHumanos == true then 
+            if unit.getPlayerName ~= nil and unit:getPlayerName() ~= nil then
+              ignore = false
+            else
+              ignore = true
+            end
+          end
+          if unit:getName() == nombreUnidad then
+             ignore = true
+          end
+          if ignore == false then
+            local dist = getDistance(unitPos, unit:getPoint())
+            if dist <= distancia then
+              if contador == true then
+                count = count + 1
+              else
+                
+                return true
+              end
+            end
+          end
+        end
+      end
+    end
+  end
+  if contador == true then
+    return count
+  else
+    return false
+  end
+end
+
+function banderaproximidadAll( nombreUnidad, distancia, coalicion )
+  return banderaPorProximidad(nombreUnidad,distancia,coalicion,true,true,true)
+end
+function banderaproximidadContadorAll( nombreUnidad, distancia, coalicion, bandera )
+  local contador = banderaPorProximidad(nombreUnidad,distancia,coalicion,true,true,true,true)
+  if contador ~= nil then
+    trigger.action.setUserFlag(bandera , contador )
+    --trigger.action.outText("Debug: Bandera 333 set to " .. tostring(contador),2)
+  end
+end
+function banderaproximidadAviones( nombreUnidad, distancia, coalicion )
+  return banderaPorProximidad(nombreUnidad,distancia,coalicion,true,false,true)
+end
+function banderaproximidadHelis( nombreUnidad, distancia, coalicion )
+  return banderaPorProximidad(nombreUnidad,distancia,coalicion,false,true,true)
+end
+
 world.addEventHandler(_eventHandler)
 env.info("Predicate event Script loaded")
 
@@ -490,3 +619,7 @@ end
 if enableRedDetection then
   detect(coalition.side.RED, detection1, detection2,detection3)
 end
+
+
+
+
