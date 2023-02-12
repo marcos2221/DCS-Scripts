@@ -1,13 +1,111 @@
- 
--- FW Support Script by Tupper 01/20/22023 
+ -- FW Support Script by Tupper 01/20/22023   -- Added suggestions by Go_rongor
 fwSupport = {}
 fwSupport.menuAdded = {}
 fwSupport.Active = {}
-local tankerAltitude = 5486
-local tankerSpeed = 128.6
 
-local awacsAltitude = 7620
-local awacsSpeed = 180.06
+local tankerData = {}
+local awacsData = {}
+tankerData["KC130"] = {
+  name = "fwSupportTanker1",
+  altitude = 6096,
+  speed    = 180,
+  frequency = 230,
+  tacan    = { 
+    callsign = "ARC",
+    channel  = 30,
+    modeChannel = "X",
+    bearing = true,
+    frequency =  991000000
+    },
+  unit =  
+  {
+    ["alt"] = 0,
+    ["alt_type"] = "BARO",
+    ["livery_id"] = "default",
+    ["skill"] = "High",
+    ["speed"] = 0,
+    ["type"] = "KC130",
+    ["psi"] = 0.033579104794468,
+    ["y"] = 0,
+    ["x"] = 0,
+    ["name"] = "",
+    ["payload"] = 
+    {
+        ["pylons"] = {}, -- end of ["pylons"]
+        ["fuel"] = 30000,
+        ["flare"] = 60,
+        ["chaff"] = 120,
+        ["gun"] = 100,
+    }, -- end of ["payload"]
+    ["heading"] = -0.033579104794468,
+    ["callsign"] = 
+    {
+        [1] = 2,
+        [2] = 1,
+        [3] = 1,
+        ["name"] = "Arco11",
+    }, -- end of ["callsign"]
+    ["onboard_num"] = "018",
+  }
+ 
+ }
+ tankerData["KC135"] = {
+  name = "fwSupportTanker2",
+  altitude = 6705.6,
+  speed    = 190,
+  frequency = 235,
+  tacan    = { 
+    callsign = "TEX",
+    channel  = 35,
+    modeChannel = "X",
+    bearing = true,
+    frequency = 996000000,
+     },
+  unit =  
+  {
+    ["alt"] = 0,
+    ["alt_type"] = "BARO",
+    ["livery_id"] = "Standard USAF",
+    ["skill"] = "High",
+    ["speed"] = 0,
+    ["type"] = "KC-135",
+    ["psi"] = 0.033579104794468,
+    ["y"] = 0,
+    ["x"] = 0,
+    ["name"] = "",
+    ["payload"] = 
+    {
+        ["pylons"] = {}, -- end of ["pylons"]
+        ["fuel"] = 90700,
+        ["flare"] = 0,
+        ["chaff"] = 0,
+        ["gun"] = 100,
+    }, -- end of ["payload"]
+    ["heading"] = -0.033579104794468,
+    ["callsign"] = 
+    {
+        [1] = 1,
+        [2] = 1,
+        [3] = 1,
+        ["name"] = "Texaco11",
+    }, -- end of ["callsign"]
+    ["onboard_num"] = "010",
+  }
+  }
+
+ awacsData["E3A"] = {
+  name = "fwSupportAwacs1",
+  altitude = 7620,
+  speed    = 205,
+  frequency = 225,
+  --[[tacan    = { 
+    callsign = "TEX",
+    channel  = 35,
+    modeChannel = "X",
+    bearing = true,
+    frequency = 996000000,
+     } ]]
+  }
 
 
 local function getMarkers( _playerName )
@@ -20,16 +118,16 @@ local function getMarkers( _playerName )
   end
   return markerList
 end
-function fwSupport.createTankerRoute( wp1, wp2 ) 
+function fwSupport.createTankerRoute( wp1, wp2, _tankerData ) 
 local route = {}
 route.points = {}
 route.points[1] = 
 { 
-  ["alt"] = tankerAltitude,
+  ["alt"] = _tankerData.altitude,
   ["action"] = "Turning Point",
   ["alt_type"] = "BARO",
   ["properties"] = { ["addopt"] = {},},
-  ["speed"] = tankerSpeed,
+  ["speed"] = _tankerData.speed,
   ["task"] = 
   { 
     ["id"] = "ComboTask",
@@ -60,12 +158,12 @@ route.points[1] =
               {
                 ["type"] = 4,
                 ["AA"] = false,
-                ["callsign"] = "TKR",
+                ["callsign"] = _tankerData.tacan.callsign,
                 ["system"] = 4,
-                ["channel"] = 1,
-                ["modeChannel"] = "X",
-                ["bearing"] = true,
-                ["frequency"] = 962000000,
+                ["channel"] = _tankerData.tacan.channel,
+                ["modeChannel"] = _tankerData.tacan.modeChannel,
+                ["bearing"] = _tankerData.tacan.bearing,
+                ["frequency"] = _tankerData.tacan.frequency,
               }, -- end of ["params"]
             }, -- end of ["action"]
           }, -- end of ["params"]
@@ -120,14 +218,14 @@ route.points[1] =
 
 route.points[2] = 
 {
-    ["alt"] = tankerAltitude,
+    ["alt"] = _tankerData.altitude,
     ["action"] = "Turning Point",
     ["alt_type"] = "BARO",
     ["properties"] = 
     {
         ["addopt"] = { }, -- end of ["addopt"]
     }, -- end of ["properties"]
-    ["speed"] = tankerSpeed,
+    ["speed"] = _tankerData.speed,
     ["task"] = 
     {
         ["id"] = "ComboTask",
@@ -145,8 +243,8 @@ route.points[2] =
                     {
                         ["speedEdited"] = true,
                         ["pattern"] = "Race-Track",
-                        ["speed"] = tankerSpeed,
-                        ["altitude"] = tankerAltitude,
+                        ["speed"] = _tankerData.speed,
+                        ["altitude"] = _tankerData.altitude,
                         ["altitudeEdited"] = true,
                     }, -- end of ["params"]
                 }, -- end of [1]
@@ -163,7 +261,7 @@ route.points[2] =
 
 route.points[3] = 
 {
-    ["alt"] = tankerAltitude,
+    ["alt"] = _tankerData.altitude,
     ["action"] = "Turning Point",
     ["alt_type"] = "BARO",
     ["properties"] = 
@@ -172,7 +270,7 @@ route.points[3] =
         {
         }, -- end of ["addopt"]
     }, -- end of ["properties"]
-    ["speed"] = tankerSpeed,
+    ["speed"] = _tankerData.speed,
     ["task"] = 
     {
         ["id"] = "ComboTask",
@@ -192,21 +290,21 @@ route.points[3] =
 }                                        
 return route
 end
-function fwSupport.createAwacsRoute( wp1, wp2)
+function fwSupport.createAwacsRoute( wp1, wp2, _awacsData)
 local route = 
 {
     ["points"] = 
     {
         [1] = 
         {
-            ["alt"] = awacsAltitude,
+            ["alt"] = _awacsData.altitude,
             ["action"] = "Turning Point",
             ["alt_type"] = "BARO",
             ["properties"] = 
             {
                 ["addopt"] = {}, -- end of ["addopt"]
             }, -- end of ["properties"]
-            ["speed"] = awacsSpeed,
+            ["speed"] = _awacsData.speed,
             ["task"] = 
             {
                 ["id"] = "ComboTask",
@@ -261,6 +359,24 @@ local route =
                                 }, -- end of ["action"]
                             }, -- end of ["params"]
                         }, -- end of [3]
+                        [4] =
+                        {
+                            ["number"] = 4,
+                            ["auto"] = false,
+                            ["id"] = "WrappedAction",
+                            ["enabled"] = true,
+                            ["params"] = 
+                            {
+                                ["action"] = 
+                                {
+                                    ["id"] = "EPLRS",
+                                    ["params"] = 
+                                    {
+                                        ["value"] = true,
+                                    }, -- end of ["params"]
+                                }, -- end of ["action"]
+                            }, -- end of ["params"]
+                        }, -- end of [4]
                     }, -- end of ["tasks"]
                 }, -- end of ["params"]
             }, -- end of ["task"]
@@ -274,7 +390,7 @@ local route =
         }, -- end of [1]
         [2] = 
         {
-            ["alt"] = awacsAltitude,
+            ["alt"] = _awacsData.altitude,
             ["action"] = "Turning Point",
             ["alt_type"] = "BARO",
             ["properties"] = 
@@ -283,7 +399,7 @@ local route =
                 {
                 }, -- end of ["addopt"]
             }, -- end of ["properties"]
-            ["speed"] = awacsSpeed,
+            ["speed"] = _awacsData.speed,
             ["task"] = 
             {
                 ["id"] = "ComboTask",
@@ -301,8 +417,8 @@ local route =
                             {
                                 ["speedEdited"] = true,
                                 ["pattern"] = "Race-Track",
-                                ["speed"] = awacsSpeed,
-                                ["altitude"] = awacsAltitude,
+                                ["speed"] = _awacsData.speed,
+                                ["altitude"] = _awacsData.altitude,
                                 ["altitudeEdited"] = true,
                             }, -- end of ["params"]
                         }, -- end of [1]
@@ -318,7 +434,7 @@ local route =
         }, -- end of [2]
         [3] = 
         {
-            ["alt"] = awacsAltitude,
+            ["alt"] = _awacsData.altitude,
             ["action"] = "Turning Point",
             ["alt_type"] = "BARO",
             ["properties"] = 
@@ -327,7 +443,7 @@ local route =
                 {
                 }, -- end of ["addopt"]
             }, -- end of ["properties"]
-            ["speed"] = awacsAltitude,
+            ["speed"] = _awacsData.speed,
             ["task"] = 
             {
                 ["id"] = "ComboTask",
@@ -366,86 +482,30 @@ groupData["units"] = {}
 groupData["route"] = _route
   return groupData
 end
-function fwSupport.getUnitKc135( wp1, unitName)
-local _unit =  
-{
-  ["alt"] = tankerAltitude,
-  ["alt_type"] = "BARO",
-  ["livery_id"] = "Standard USAF",
-  ["skill"] = "High",
-  ["speed"] = tankerSpeed,
-  ["type"] = "KC-135",
-  ["psi"] = 0.033579104794468,
-  ["y"] = wp1.z,
-  ["x"] = wp1.x,
-  ["name"] = unitName,
-  ["payload"] = 
-  {
-      ["pylons"] = {}, -- end of ["pylons"]
-      ["fuel"] = 90700,
-      ["flare"] = 0,
-      ["chaff"] = 0,
-      ["gun"] = 100,
-  }, -- end of ["payload"]
-  ["heading"] = -0.033579104794468,
-  ["callsign"] = 
-  {
-      [1] = 1,
-      [2] = 1,
-      [3] = 1,
-      ["name"] = "Texaco11",
-  }, -- end of ["callsign"]
-  ["onboard_num"] = "010",
-}
+
+function fwSupport.getTankerUnit ( wp1, unitName, _tankerData)
+local _unit =  _tankerData.unit
+_unit.alt   = _tankerData.altitude
+_unit.speed = _tankerData.speed
+_unit.y = wp1.z
+_unit.x = wp1.x
+_unit.name = _tankerData.name
 return _unit
 end
-function fwSupport.getUnitKc130( wp1, unitName)
-local _unit =  
-{
-  ["alt"] = tankerAltitude,
-  ["alt_type"] = "BARO",
-  ["livery_id"] = "default",
-  ["skill"] = "High",
-  ["speed"] = tankerSpeed,
-  ["type"] = "KC130",
-  ["unitId"] = 103,
-  ["psi"] = 0.033579104794468,
-  ["y"] = wp1.z,
-  ["x"] = wp1.x,
-  ["name"] = unitName,
-  ["payload"] = 
-  {
-      ["pylons"] = {}, -- end of ["pylons"]
-      ["fuel"] = 30000,
-      ["flare"] = 60,
-      ["chaff"] = 120,
-      ["gun"] = 100,
-  }, -- end of ["payload"]
-  ["heading"] = -0.033579104794468,
-  ["callsign"] = 
-  {
-      [1] = 2,
-      [2] = 1,
-      [3] = 1,
-      ["name"] = "Arco11",
-  }, -- end of ["callsign"]
-  ["onboard_num"] = "018",
-}
-return _unit
-end
-function fwSupport.getUnitAwacs( wp1, unitName)
+
+function fwSupport.getUnitAwacs( wp1, _awacsData)
 local unit =  
     {
-      ["alt"] = awacsAltitude,
+      ["alt"] = _awacsData.altitude,
       ["alt_type"] = "BARO",
       ["livery_id"] = "nato",
       ["skill"] = "High",
-      ["speed"] = awacsSpeed,
+      ["speed"] = _awacsData.speed,
       ["type"] = "E-3A",
       ["psi"] = 0.033579104794468,
       ["y"] = wp1.z,
       ["x"] = wp1.x,
-      ["name"] = unitName,
+      ["name"] = _awacsData.name,
       ["payload"] = 
       {
           ["pylons"] = {}, -- end of ["pylons"]
@@ -501,33 +561,31 @@ function fwSupport.unitSpawn( args )
   trigger.action.removeMark( wp1.idx )
   trigger.action.removeMark( wp2.idx )
   fwSupport.Active[args.unit] = timer.getTime() + 1200
-  local freq = "255"
+  local freq 
   if args.unit == "KC130" then
-    fwSupport.spawnTanker130(country.id.CJTF_BLUE ,wp1.pos,wp2.pos)
+    freq = tankerData.KC130.frequency
+    fwSupport.spawnTanker( country.id.CJTF_BLUE,wp1.pos,wp2.pos,tankerData.KC130)
   elseif args.unit == "KC135" then
-    fwSupport.spawnTanker135(country.id.CJTF_BLUE ,wp1.pos,wp2.pos)
+    freq = tankerData.KC135.frequency
+    fwSupport.spawnTanker( country.id.CJTF_BLUE,wp1.pos,wp2.pos,tankerData.KC135)
   elseif args.unit == "AWACS" then
-    fwSupport.spawnAwacs(country.id.CJTF_BLUE,wp1.pos,wp2.pos)
-    freq = "250"
-    
+    freq = awacsData.E3A.frequency
+    fwSupport.spawnAwacs(country.id.CJTF_BLUE,wp1.pos,wp2.pos, awacsData.E3A)
   end
   trigger.action.outTextForGroup(groupId, string.format("%s spawned, Frequency: %s",args.unit, freq), 20, false)
 end
-function fwSupport.spawnTanker130(_country, wp1, wp2)
-  local groupData = fwSupport.getGroupData("fwTanker1",wp1,wp2,255,"Refueling", fwSupport.createTankerRoute(wp1,wp2))
-  table.insert( groupData.units, fwSupport.getUnitKc130(wp1,"fwTanker1") )
+function fwSupport.spawnTanker( _country,wp1,wp2,_tankerData)
+
+  local groupData = fwSupport.getGroupData(_tankerData.name,wp1,wp2,_tankerData.frequency,"Refueling", fwSupport.createTankerRoute(wp1,wp2,_tankerData))
+  table.insert( groupData.units, fwSupport.getTankerUnit(wp1,_tankerData) )
   local _spawnedGroup = coalition.addGroup(_country, Group.Category.AIRPLANE, groupData)
   return _spawnedGroup
+
 end
-function fwSupport.spawnTanker135(_country, wp1, wp2)
-  local groupData = fwSupport.getGroupData("fwTanker2",wp1,wp2,255,"Refueling", fwSupport.createTankerRoute(wp1,wp2))
-  table.insert( groupData.units, fwSupport.getUnitKc135(wp1,"fwTanker2") )
-  local _spawnedGroup = coalition.addGroup(_country, Group.Category.AIRPLANE, groupData)
-  return _spawnedGroup
-end
-function fwSupport.spawnAwacs( _country, wp1, wp2)
-  local groupData = fwSupport.getGroupData("fwSupportAwacs1",wp1,wp2,250,"AWACS", fwSupport.createAwacsRoute(wp1,wp2))
-  table.insert( groupData.units, fwSupport.getUnitAwacs(wp1,"fwSupportAwacs1") )
+
+function fwSupport.spawnAwacs( _country, wp1, wp2, _awacsData)
+  local groupData = fwSupport.getGroupData(_awacsData.name,wp1,wp2,_awacsData.frequency,"AWACS", fwSupport.createAwacsRoute(wp1,wp2, _awacsData))
+  table.insert( groupData.units, fwSupport.getUnitAwacs(wp1,_awacsData) )
   local _spawnedGroup = coalition.addGroup(_country, Group.Category.AIRPLANE, groupData)
   return _spawnedGroup
 end
