@@ -1,4 +1,4 @@
- -- FW Support Script by Tupper 01/20/22023   -- Added suggestions by Go_rongor
+ -- FW Support Script by Tupper 01/20/22023 
 fwSupport = {}
 fwSupport.menuAdded = {}
 fwSupport.Active = {}
@@ -146,7 +146,7 @@ route.points[1] =
         [2] = 
         {
           ["enabled"] = true,
-          ["auto"] = true,
+          ["auto"] = false,
           ["id"] = "WrappedAction",
           ["number"] = 2,
           ["params"] =
@@ -359,7 +359,7 @@ local route =
                                 }, -- end of ["action"]
                             }, -- end of ["params"]
                         }, -- end of [3]
-                        [4] =
+                        --[[[4] =
                         {
                             ["number"] = 4,
                             ["auto"] = false,
@@ -376,7 +376,7 @@ local route =
                                     }, -- end of ["params"]
                                 }, -- end of ["action"]
                             }, -- end of ["params"]
-                        }, -- end of [4]
+                        }, -- end of [4] ]] 
                     }, -- end of ["tasks"]
                 }, -- end of ["params"]
             }, -- end of ["task"]
@@ -483,7 +483,7 @@ groupData["route"] = _route
   return groupData
 end
 
-function fwSupport.getTankerUnit ( wp1, unitName, _tankerData)
+function fwSupport.getTankerUnit ( wp1, _tankerData)
 local _unit =  _tankerData.unit
 _unit.alt   = _tankerData.altitude
 _unit.speed = _tankerData.speed
@@ -527,8 +527,12 @@ local unit =
 return unit
 end
 function fwSupport.checkActive( unit)
-  if fwSupport.Active[unit] ~= nil and fwSupport.Active[unit] > timer.getTime()  then 
-    return true, string.format("%.0f",( fwSupport.Active[unit] - timer.getTime()) / 60)   
+  if fwSupport.Active[unit] ~= nil and fwSupport.Active[unit].time > timer.getTime()  then
+    local _group = Group.getByName(fwSupport.Active[unit].groupName)
+    if _group == nil then return false end
+    local _unit = _group:getUnit(1)
+    if _unit == nil then return false end 
+    return true, string.format("%.0f",( fwSupport.Active[unit].time - timer.getTime()) / 60)   
   end
   return false
 end
@@ -544,6 +548,18 @@ function fwSupport.unitSpawn( args )
     trigger.action.outTextForGroup(groupId, "There is an active ".. args.unit .. " already, wait " .. remaining .. " Minutes" , 30, false)
     return
   end
+  
+  --[[if args.unit == "AWACS" then
+    -- Check One of the tankers is flying
+      local active, remaining = fwSupport.checkActive( "KC130")
+      if active ~= true then
+        active, remaining = fwSupport.checkActive( "KC135")
+        if active ~= true then
+          trigger.action.outTextForGroup(groupId, "Due to a small issue, Spawn any tanker first, then Spawn the awacs" , 30, false)
+          return
+        end
+      end
+  end]]
   --Get Waypoints (last 2 markers)
    
   local _groupMarks = getMarkers( _unit:getPlayerName() )
@@ -560,17 +576,26 @@ function fwSupport.unitSpawn( args )
   end
   trigger.action.removeMark( wp1.idx )
   trigger.action.removeMark( wp2.idx )
-  fwSupport.Active[args.unit] = timer.getTime() + 1200
+  fwSupport.Active[args.unit] = { time = timer.getTime() + 1200 }
   local freq 
   if args.unit == "KC130" then
     freq = tankerData.KC130.frequency
-    fwSupport.spawnTanker( country.id.CJTF_BLUE,wp1.pos,wp2.pos,tankerData.KC130)
+    local _spgroup = fwSupport.spawnTanker( country.id.CJTF_BLUE,wp1.pos,wp2.pos,tankerData.KC130)
+    if _spgroup ~= nil then
+      fwSupport.Active[args.unit].groupName = _spgroup:getName()    
+    end
   elseif args.unit == "KC135" then
     freq = tankerData.KC135.frequency
-    fwSupport.spawnTanker( country.id.CJTF_BLUE,wp1.pos,wp2.pos,tankerData.KC135)
+    local _spgroup = fwSupport.spawnTanker( country.id.CJTF_BLUE,wp1.pos,wp2.pos,tankerData.KC135)
+    if _spgroup ~= nil then
+      fwSupport.Active[args.unit].groupName = _spgroup:getName()    
+    end
   elseif args.unit == "AWACS" then
     freq = awacsData.E3A.frequency
-    fwSupport.spawnAwacs(country.id.CJTF_BLUE,wp1.pos,wp2.pos, awacsData.E3A)
+    local _spgroup = fwSupport.spawnAwacs(country.id.CJTF_BLUE,wp1.pos,wp2.pos, awacsData.E3A)
+    if _spgroup ~= nil then
+      fwSupport.Active[args.unit].groupName = _spgroup:getName()    
+    end
   end
   trigger.action.outTextForGroup(groupId, string.format("%s spawned, Frequency: %s",args.unit, freq), 20, false)
 end
@@ -582,11 +607,27 @@ function fwSupport.spawnTanker( _country,wp1,wp2,_tankerData)
   return _spawnedGroup
 
 end
+local function addAwacsParameters( _group )
+    local _setEplrs = {
+        id = 'EPLRS',
+        params = {
+            value = true
+        }
+    }
 
+    local _controller = _group:getController()
+    Controller.setCommand(_controller, _setEplrs)
+end    
 function fwSupport.spawnAwacs( _country, wp1, wp2, _awacsData)
   local groupData = fwSupport.getGroupData(_awacsData.name,wp1,wp2,_awacsData.frequency,"AWACS", fwSupport.createAwacsRoute(wp1,wp2, _awacsData))
   table.insert( groupData.units, fwSupport.getUnitAwacs(wp1,_awacsData) )
   local _spawnedGroup = coalition.addGroup(_country, Group.Category.AIRPLANE, groupData)
+ --[[ env.info("Awacs Spawned Assign EPLRS")
+  timer.scheduleFunction(function( _group ) 
+    addAwacsParameters( _group )
+  end,_spawnedGroup,timer.getTime() + 2)
+  ]]
+  
   return _spawnedGroup
 end
 
